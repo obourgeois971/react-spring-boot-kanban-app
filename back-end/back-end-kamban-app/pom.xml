@@ -55,10 +55,14 @@
 <!--		    <artifactId>mysql-connector-j</artifactId>-->
 <!--		    <version>8.0.33</version>-->
 <!--		</dependency>-->
+		
 		<dependency>
-		    <groupId>mysql</groupId>
-		    <artifactId>mysql-connector-java</artifactId>
+    		<groupId>mysql</groupId>
+    		<artifactId>mysql-connector-java</artifactId>
+    		<version>8.0.33</version> <!-- Assurez-vous d'utiliser une version appropriée -->
 		</dependency>
+
+		
 		<dependency>
 		    <groupId>org.hibernate</groupId>
 		    <artifactId>hibernate-core</artifactId>
