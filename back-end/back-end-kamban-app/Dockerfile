@@ -9,5 +9,5 @@ RUN mvn clean package -DskipTests
 # Étape 2 : Exécution de l'application
 FROM openjdk:8-jre-slim
 WORKDIR /app
-COPY --from=build /app/target/back-end-kamban-app.jar /app/back-end-kamban-app.jar
+COPY --from=build /app/target/back-end-kamban-app-0.0.1-SNAPSHOT.jar /app/back-end-kamban-app.jar
 ENTRYPOINT ["java", "-jar", "/app/back-end-kamban-app.jar"]
