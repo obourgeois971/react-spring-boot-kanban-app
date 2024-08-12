@@ -1,0 +1,36 @@
+version: '3.8'
+
+services:
+  mysql:
+    image: mysql:8.0
+    container_name: mysql-db
+    environment:
+      MYSQL_ROOT_PASSWORD: root
+      MYSQL_DATABASE: ppmtcourse
+    ports:
+      - "3306:3306"
+    volumes:
+      - mysql-data:/var/lib/mysql
+
+  back-end-kamban-app:
+    build: ./back-end
+    container_name: back-end-kamban-app
+    environment:
+      SPRING_DATASOURCE_URL: jdbc:mysql://mysql-db:3306/ppmtcourse
+      SPRING_DATASOURCE_USERNAME: root
+      SPRING_DATASOURCE_PASSWORD: root
+    ports:
+      - "8080:8080"
+    depends_on:
+      - mysql
+
+  reactjs:
+    build: ./front-end
+    container_name: reactjs-app
+    ports:
+      - "3000:80"
+    depends_on:
+      - back-end-kamban-app
+
+volumes:
+  mysql-data:

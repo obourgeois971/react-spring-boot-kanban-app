@@ -9,5 +9,5 @@ RUN mvn clean package -DskipTests
 # Étape 2 : Exécution de l'application
 FROM openjdk:8-jre-slim
 WORKDIR /app
-COPY --from=build /app/target/mon-application-spring-boot.jar /app/mon-application-spring-boot.jar
-ENTRYPOINT ["java", "-jar", "/app/mon-application-spring-boot.jar"]
+COPY --from=build /app/target/back-end-kamban-app.jar /app/back-end-kamban-app.jar
+ENTRYPOINT ["java", "-jar", "/app/back-end-kamban-app.jar"]
