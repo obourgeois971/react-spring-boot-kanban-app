@@ -12,9 +12,9 @@ services:
     volumes:
       - mysql-data:/var/lib/mysql
 
-  back-end-kamban-app:
-    build: ./back-end
-    container_name: back-end-kamban-app
+  back-end:
+    build: ./back-end/back-end-kamban-app
+    container_name: back-end
     environment:
       SPRING_DATASOURCE_URL: jdbc:mysql://mysql-db:3306/ppmtcourse
       SPRING_DATASOURCE_USERNAME: root
@@ -24,13 +24,13 @@ services:
     depends_on:
       - mysql
 
-  reactjs:
-    build: ./front-end
+  front-end:
+    build: ./front-end/front-end-kanban-app
     container_name: reactjs-app
     ports:
       - "3000:80"
     depends_on:
-      - back-end-kamban-app
+      - back-end
 
 volumes:
   mysql-data:
