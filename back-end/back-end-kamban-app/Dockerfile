@@ -1,23 +1,10 @@
-FROM maven:3.9-eclipse-temurin-17-alpine as build
+FROM adoptopenjdk/maven-openjdk11:latest
 
-WORKDIR /app
+COPY . /app/
+RUN mkdir -p /back-end-kamban-app
 
-COPY pom.xml ./
+WORKDIR /app/
+RUN mvn clean package -Dmaven.test.skip=true
+RUN chmod 777 target/back-end-kamban-app.war
 
-COPY src src/
-
-RUN mvn clean package -D skipTests
-
-# Run the app in a minimal java container
-
-FROM eclipse-temurin:17-jre-alpine
-
-VOLUME /tmp
-
-EXPOSE 8080
-
-ARG JAR_FILE=/app/target/*.jar
-
-COPY --from=build ${JAR_FILE} app.jar
-
-ENTRYPOINT ["java","-jar","/app.jar"]
+CMD ["nohup",  "java",  "-jar",  "target/back-end-kamban-app.war",  ">",  "/back-end-kamban-app/back-end-kamban-app.log",  "2>1&"]

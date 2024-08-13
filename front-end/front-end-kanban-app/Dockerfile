@@ -1,20 +1,20 @@
+FROM node:21-alpine3.19 AS builder
 
-FROM node:14 AS build
-
+COPY . /app/
 WORKDIR /app
 
-COPY package*.json ./
-
 RUN npm install
-
-COPY . .
-
+RUN npm install --save leaflet
 RUN npm run build
 
 FROM nginx:alpine
 
-COPY --from=build /app/build /usr/share/nginx/html
+WORKDIR /usr/share/nginx/html
 
-EXPOSE 80
+RUN rm -rf ./*
 
-CMD ["nginx", "-g", "daemon off;"]
+COPY --from=builder /app/dist .
+
+COPY ./nginx.conf /etc/nginx/conf.d/default.conf
+
+ENTRYPOINT ["nginx", "-g", "daemon off;"]
