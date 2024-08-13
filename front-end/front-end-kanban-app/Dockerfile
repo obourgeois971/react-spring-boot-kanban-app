@@ -1,19 +1,32 @@
-FROM node:18-alpine as build
+# FROM node:16-alpine
 
-ARG VITE_BACKEND_HOST
-ENV VITE_BACKEND_HOST=$VITE_BACKEND_HOST
-
+FROM node:16
 WORKDIR /app
+COPY package.json .
+RUN npm install
+COPY . .
 
-COPY package.json package-lock.json ./
+EXPOSE 3000
 
-RUN npm i
+CMD ["npm", "start"]
 
-COPY index.html vite.config.js ./
 
-COPY src ./src
+# FROM node:18-alpine as build
 
-RUN npm run build
+#ARG VITE_BACKEND_HOST
+#ENV VITE_BACKEND_HOST=$VITE_BACKEND_HOST
+
+#WORKDIR /app
+
+#COPY package.json package-lock.json ./
+
+#RUN npm i
+
+#COPY index.html vite.config.js ./
+
+#COPY src ./src
+
+#RUN npm run build
 
 # Run the app in a minimal nginx container
 
