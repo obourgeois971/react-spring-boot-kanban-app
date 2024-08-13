@@ -1,41 +1,19 @@
-# FROM node:16-alpine
 
-FROM node:16
+FROM node:14 AS build
+
 WORKDIR /app
-COPY package.json .
+
+COPY package*.json ./
+
 RUN npm install
+
 COPY . .
 
-EXPOSE 3000
-
-CMD ["npm", "start"]
-
-
-# FROM node:18-alpine as build
-
-#ARG VITE_BACKEND_HOST
-#ENV VITE_BACKEND_HOST=$VITE_BACKEND_HOST
-
-#WORKDIR /app
-
-#COPY package.json package-lock.json ./
-
-#RUN npm i
-
-#COPY index.html vite.config.js ./
-
-#COPY src ./src
-
-#RUN npm run build
-
-# Run the app in a minimal nginx container
+RUN npm run build
 
 FROM nginx:alpine
 
-# COPY --from=build /app/dist /usr/share/nginx/html
 COPY --from=build /app/build /usr/share/nginx/html
-
-COPY ./nginx.conf /etc/nginx/conf.d/default.conf
 
 EXPOSE 80
 
