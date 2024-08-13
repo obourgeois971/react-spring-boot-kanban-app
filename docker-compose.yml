@@ -19,7 +19,11 @@ services:
       - project1-network
     depends_on:
       - mysql-container
-    image: toolkithi/my-spring:latest
+
+    build: ./back-end/back-end-kamban-app
+    image: back-end-kamban-app:0.0.1-SNAPSHOT
+    container_name: spring-boot
+
     restart: always
     environment:
       DB_USERNAME: root
@@ -35,7 +39,11 @@ services:
       - project1-network
     depends_on:
       - mysql-container
-    image: toolkithi/my-spring:latest
+
+    build: ./back-end/back-end-kamban-app
+    image: back-end-kamban-app:0.0.1-SNAPSHOT
+    container_name: spring-boot
+
     restart: always
     environment:
       DB_USERNAME: root
