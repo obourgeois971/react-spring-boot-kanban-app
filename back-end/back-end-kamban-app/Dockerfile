@@ -1,7 +1,23 @@
-# FROM openjdk:8-jre-slim AS deploy
+FROM maven:3.9-eclipse-temurin-17-alpine as build
 
-FROM openjdk:8
-ARG JAR_FILE=/build/libs/*.jar
-COPY ${JAR_FILE} app.jar
-ENTRYPOINT ["java", "-jar", "app.jar"]
-EXPOSE 8080-8081
+WORKDIR /app
+
+COPY pom.xml ./
+
+COPY src src/
+
+RUN mvn clean package -D skipTests
+
+# Run the app in a minimal java container
+
+FROM eclipse-temurin:17-jre-alpine
+
+VOLUME /tmp
+
+EXPOSE 8080
+
+ARG JAR_FILE=/app/target/*.jar
+
+COPY --from=build ${JAR_FILE} app.jar
+
+ENTRYPOINT ["java","-jar","/app.jar"]

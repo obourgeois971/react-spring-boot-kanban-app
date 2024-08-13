@@ -1,69 +1,58 @@
-version: '3'
 services:
-  mysql-container:
-    image: mysql:8.0.32
-    networks:
-      - project1-network
+  mysql:
+    image: mysql:8.2
+    container_name: dockerized_mysql
+    restart: always
+    ports:
+      - 3306:3306
+    environment:
+      - MYSQL_ALLOW_EMPTY_PASSWORD=yes
+      - MYSQL_USER
+      - MYSQL_PASSWORD
+      - MYSQL_DATABASE
     volumes:
-      - mysqlvol:/var/lib/mysql
-    restart: always
-    environment:
-      MYSQL_ROOT_PASSWORD: root
-      MYSQL_DATABASE: ppmtcourse
-      MYSQL_USER: root
-      MYSQL_PASSWORD: root
-  #    ports:
-  #      - 12345:3306
-  spring_server1:
+      - type: volume
+        source: mysql-data
+        target: /var/lib/mysql
     networks:
-      - project1-network
+      - localnet
+
+  backend:
     depends_on:
-      - mysql-container
-
-    build: ./back-end/back-end-kamban-app
-    image: back-end-kamban-app:0.0.1-SNAPSHOT
-    container_name: spring-boot
-
+      - mysql
+    container_name: dockerized_backend
     restart: always
+    build:
+      context: ./back-end/back-end-kamban-app
+      dockerfile: Dockerfile
     environment:
-      DB_USERNAME: root
-      DB_HOST: mysql-container
-      DB_PASSWORD: root
-      DB_NAME: ppmtcourse
-      PORT: 8080
-      DB_PORT: 3306
-      SERVER_NUMBER: 1
-      JWT_SECRET: dpoasjkopwkqop32j1p3oj21pjpsaojdsapojopdjsdsadsa81203podjas0809s09
-  spring_server2:
+      - DB_HOST=mysql:3306
+      - DB_USER
+      - DB_PASSWORD
+      - DB_DATABASE
+    ports:
+      - '8080:8080'
     networks:
-      - project1-network
+      - localnet
+
+  frontend:
     depends_on:
-      - mysql-container
-
-    build: ./back-end/back-end-kamban-app
-    image: back-end-kamban-app:0.0.1-SNAPSHOT
-    container_name: spring-boot
-
+      - backend
+    container_name: dockerized_frontend
     restart: always
-    environment:
-      DB_USERNAME: root
-      DB_HOST: mysql-container
-      DB_PASSWORD: root
-      DB_NAME: ppmtcourse
-      PORT: 8081
-      DB_PORT: 3306
-      SERVER_NUMBER: 2
-      JWT_SECRET: dpoasjkopwkqop32j1p3oj21pjpsaojdsapojopdjsdsadsa81203podjas0809s09
-  proxy:
-    networks:
-      - project1-network
-    image: toolkithi/mynginx:latest
+    build:
+      context: ./front-end/front-end-kanban-app
+      dockerfile: Dockerfile
+      args:
+        - VITE_BACKEND_HOST
     ports:
       - '80:80'
-    restart: always
-    depends_on:
-      - spring_server1
-networks:
-  project1-network:
+    networks:
+      - localnet
+
 volumes:
-  mysqlvol:
+  mysql-data:
+
+networks:
+  localnet:
+    driver: bridge
