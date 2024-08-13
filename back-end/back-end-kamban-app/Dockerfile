@@ -29,6 +29,6 @@ RUN mvn clean package -DskipTests
 
 FROM openjdk:8-jre-slim AS deploy
 WORKDIR /app
-COPY --from=build /build/target/*.jar app.jar
+COPY --from=build /app/target/*.jar app.jar
 EXPOSE 8000
 ENTRYPOINT ["java", "-jar", "app.jar"]
